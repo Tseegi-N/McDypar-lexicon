@@ -1,0 +1,7 @@
+To run a demo, start clisp from this directory and then evaluate
+
+(load 'mcdypar)
+
+and
+
+(mcdypar 'example)

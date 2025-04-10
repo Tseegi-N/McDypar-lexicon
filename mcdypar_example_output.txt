@@ -1,0 +1,452 @@
+jamie:lisp_mcdypar_dist jmacbeth$ clisp
+  i i i i i i i       ooooo    o        ooooooo   ooooo   ooooo
+  I I I I I I I      8     8   8           8     8     o  8    8
+  I  \ `+' /  I      8         8           8     8        8    8
+   \  `-+-'  /       8         8           8      ooooo   8oooo
+    `-__|__-'        8         8           8           8  8
+        |            8     o   8           8     o     8  8
+  ------+------       ooooo    8oooooo  ooo8ooo   ooooo   8
+
+Welcome to GNU CLISP 2.49 (2010-07-07) <http://clisp.cons.org/>
+
+Copyright (c) Bruno Haible, Michael Stoll 1992, 1993
+Copyright (c) Bruno Haible, Marcus Daniels 1994-1997
+Copyright (c) Bruno Haible, Pierpaolo Bernardi, Sam Steingold 1998
+Copyright (c) Bruno Haible, Sam Steingold 1999-2000
+Copyright (c) Sam Steingold, Bruno Haible 2001-2010
+
+Type :h and hit Enter for context help.
+
+[1]> (load 'mcdypar)
+;; Loading file /Users/jmacbeth/Desktop/Projects/NLP/GOFAI NLP/concept_parsers/lisp_mcdypar_dist/mcdypar.lisp ...
+;; Loaded file /Users/jmacbeth/Desktop/Projects/NLP/GOFAI NLP/concept_parsers/lisp_mcdypar_dist/mcdypar.lisp
+T
+[2]> (mcdypar 'example)
+
+********************************************************
+
+KCL MCDYPAR
+
+Sentence read:
+  (*PARAGRAPH* JOHN PICKED UP THE BALL AND DROPPED IT IN THE BOX)
+
+********************************************************
+--------------------------------------------------------
+Processing word: *PARAGRAPH*
+--------------------------------------------------------
+-- is ignored
+Parse Results:
+
+--------------------------------------------------------
+Processing word: JOHN
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT0
+split-config, con = CONCEPT0, config = (HUMAN NAME (JOHN) GENDER (MALE))
+split-rest, con = CONCEPT0, rest = (NAME (JOHN) GENDER (MALE))
+struct = NIL, slot = NAME
+slot = NAME, filler = (JOHN), struct = (NAME)
+#1 slot = NAME, filler = (JOHN), struct = (NAME)
+split-config, con = CONCEPT0, config = (JOHN)
+split-rest, con = CONCEPT0, rest = NIL
+#2 slot = NAME, filler = (JOHN), struct = (NAME)
+struct = (NAME), gap = NAME0
+struct = (NAME NAME0), slot = GENDER
+slot = GENDER, filler = (MALE), struct = (NAME NAME0 GENDER)
+#1 slot = GENDER, filler = (MALE), struct = (NAME NAME0 GENDER)
+split-config, con = CONCEPT0, config = (MALE)
+split-rest, con = CONCEPT0, rest = NIL
+#2 slot = GENDER, filler = (MALE), struct = (NAME NAME0 GENDER)
+struct = (NAME NAME0 GENDER), gap = GENDER0
+CONCEPT0 = (HUMAN NAME NAME0 GENDER GENDER0)
+spawn-name, con = CONCEPT0, head = SAVE-CHARACTER, args = ('CONCEPT0)
+Spawning: DEMON0 = (SAVE-CHARACTER CONCEPT0)
+
+======================== DEMON0 =========================
+t:
+a:Bind the MYCONCEPT to the MOST-RECENT-CHARACTER, if there
+     is no LOCAL-CHARACTER bind the MYCONCEPT to it also
+========================================================
+
+Executing: DEMON0 = (SAVE-CHARACTER CONCEPT0)
+Killing: DEMON0 = (SAVE-CHARACTER CONCEPT0)
+Parse Results:
+
+(HUMAN NAME (JOHN) GENDER (MALE))
+--------------------------------------------------------
+Processing word: PICKED
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT1
+CONCEPT1 = NIL
+spawn-name, con = CONCEPT1, head = PICK-UP?, args = ('CONCEPT1)
+Spawning: DEMON1 = (PICK-UP? CONCEPT1)
+
+======================== DEMON1 =========================
+t:If the next word is UP...
+a:Set the MYCONCEPT to the grasp configuration
+========================================================
+
+spawn-name, con = CONCEPT1, head = DECIDE?, args = ('CONCEPT1)
+Spawning: DEMON2 = (DECIDE? CONCEPT1)
+
+======================== DEMON2 =========================
+t:Search for a person or a physical object after the MYCONCEPT
+a:Set the MYCONCEPT to the decision configuration
+========================================================
+
+Executing: DEMON1 = (PICK-UP? CONCEPT1)
+split-config, con = CONCEPT1, config = 
+(GRASP ACTOR HUMAN-GAP <== (EXP 'HUMAN 'BEFORE) OBJECT OBJECT-GAP <==
+ (EXP 'PHYSICAL-OBJECT 'AFTER) INSTR
+ (MOVE ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP))
+split-rest, con = CONCEPT1, rest = 
+(ACTOR HUMAN-GAP <== (EXP 'HUMAN 'BEFORE) OBJECT OBJECT-GAP <==
+ (EXP 'PHYSICAL-OBJECT 'AFTER) INSTR
+ (MOVE ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP))
+struct = NIL, slot = ACTOR
+slot = ACTOR, filler = HUMAN-GAP, struct = (ACTOR)
+spawn-name, con = CONCEPT1, head = EXP, args = ('CONCEPT1 'HUMAN-GAP0 'HUMAN 'BEFORE)
+Spawning: DEMON3 = (EXP CONCEPT1 HUMAN-GAP0 HUMAN BEFORE)
+
+======================== DEMON3 =========================
+t:Search for a CONCEPT with one of the given CLASSES
+     in the given DIRECTION until a boundary is reached.
+a:The CONCEPT is bound to the given GAP.
+========================================================
+
+struct = (ACTOR), gap = HUMAN-GAP0
+struct = (ACTOR HUMAN-GAP0), slot = OBJECT
+slot = OBJECT, filler = OBJECT-GAP, struct = (ACTOR HUMAN-GAP0 OBJECT)
+spawn-name, con = CONCEPT1, head = EXP, args = ('CONCEPT1 'OBJECT-GAP0 'PHYSICAL-OBJECT 'AFTER)
+Spawning: DEMON4 = (EXP CONCEPT1 OBJECT-GAP0 PHYSICAL-OBJECT AFTER)
+
+======================== DEMON4 =========================
+t:Search for a CONCEPT with one of the given CLASSES
+     in the given DIRECTION until a boundary is reached.
+a:The CONCEPT is bound to the given GAP.
+========================================================
+
+struct = (ACTOR HUMAN-GAP0 OBJECT), gap = OBJECT-GAP0
+struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT-GAP0), slot = INSTR
+slot = INSTR, filler = (MOVE ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP), struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT-GAP0 INSTR)
+#1 slot = INSTR, filler = (MOVE ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP), struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT-GAP0 INSTR)
+split-config, con = CONCEPT1, config = (MOVE ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP)
+split-rest, con = CONCEPT1, rest = (ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP)
+struct = NIL, slot = ACTOR
+slot = ACTOR, filler = HUMAN-GAP, struct = (ACTOR)
+struct = (ACTOR), gap = HUMAN-GAP0
+struct = (ACTOR HUMAN-GAP0), slot = OBJECT
+slot = OBJECT, filler = (FINGERS), struct = (ACTOR HUMAN-GAP0 OBJECT)
+#1 slot = OBJECT, filler = (FINGERS), struct = (ACTOR HUMAN-GAP0 OBJECT)
+split-config, con = CONCEPT1, config = (FINGERS)
+split-rest, con = CONCEPT1, rest = NIL
+#2 slot = OBJECT, filler = (FINGERS), struct = (ACTOR HUMAN-GAP0 OBJECT)
+struct = (ACTOR HUMAN-GAP0 OBJECT), gap = OBJECT0
+struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT0), slot = TO
+slot = TO, filler = OBJECT-GAP, struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT0 TO)
+struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT0 TO), gap = OBJECT-GAP0
+#2 slot = INSTR, filler = (MOVE ACTOR HUMAN-GAP OBJECT (FINGERS) TO OBJECT-GAP), struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT-GAP0 INSTR)
+struct = (ACTOR HUMAN-GAP0 OBJECT OBJECT-GAP0 INSTR), gap = INSTR0
+CONCEPT1 = (GRASP ACTOR HUMAN-GAP0 OBJECT OBJECT-GAP0 INSTR INSTR0)
+Killing: DEMON1 = (PICK-UP? CONCEPT1)
+Executing: DEMON3 = (EXP CONCEPT1 HUMAN-GAP0 HUMAN BEFORE)
+HUMAN-GAP0 <-- CONCEPT0
+Killing: DEMON3 = (EXP CONCEPT1 HUMAN-GAP0 HUMAN BEFORE)
+Killing: DEMON2 = (DECIDE? CONCEPT1)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT NIL INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO NIL))
+--------------------------------------------------------
+Processing word: UP
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT2
+CONCEPT2 = NIL
+spawn-name, con = CONCEPT2, head = IGNORE, args = ('CONCEPT2)
+Spawning: DEMON5 = (IGNORE CONCEPT2)
+Executing: DEMON5 = (IGNORE CONCEPT2)
+Killing: DEMON5 = (IGNORE CONCEPT2)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT NIL INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO NIL))
+--------------------------------------------------------
+Processing word: THE
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT3
+CONCEPT3 = NIL
+spawn-name, con = CONCEPT3, head = IGNORE, args = ('CONCEPT3)
+Spawning: DEMON6 = (IGNORE CONCEPT3)
+Executing: DEMON6 = (IGNORE CONCEPT3)
+Killing: DEMON6 = (IGNORE CONCEPT3)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT NIL INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO NIL))
+--------------------------------------------------------
+Processing word: BALL
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT4
+split-config, con = CONCEPT4, config = (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))
+split-rest, con = CONCEPT4, rest = (CLASS (GAME-OBJECT) NAME (BALL))
+struct = NIL, slot = CLASS
+slot = CLASS, filler = (GAME-OBJECT), struct = (CLASS)
+#1 slot = CLASS, filler = (GAME-OBJECT), struct = (CLASS)
+split-config, con = CONCEPT4, config = (GAME-OBJECT)
+split-rest, con = CONCEPT4, rest = NIL
+#2 slot = CLASS, filler = (GAME-OBJECT), struct = (CLASS)
+struct = (CLASS), gap = CLASS0
+struct = (CLASS CLASS0), slot = NAME
+slot = NAME, filler = (BALL), struct = (CLASS CLASS0 NAME)
+#1 slot = NAME, filler = (BALL), struct = (CLASS CLASS0 NAME)
+split-config, con = CONCEPT4, config = (BALL)
+split-rest, con = CONCEPT4, rest = NIL
+#2 slot = NAME, filler = (BALL), struct = (CLASS CLASS0 NAME)
+struct = (CLASS CLASS0 NAME), gap = NAME1
+CONCEPT4 = (PHYSICAL-OBJECT CLASS CLASS0 NAME NAME1)
+spawn-name, con = CONCEPT4, head = SAVE-OBJECT, args = ('CONCEPT4)
+Spawning: DEMON7 = (SAVE-OBJECT CONCEPT4)
+qt:
+a:Bind the MYCONCEPT to the MOST-RECENT-OBJECT
+========================================================
+
+Executing: DEMON7 = (SAVE-OBJECT CONCEPT4)
+Killing: DEMON7 = (SAVE-OBJECT CONCEPT4)
+Executing: DEMON4 = (EXP CONCEPT1 OBJECT-GAP0 PHYSICAL-OBJECT AFTER)
+OBJECT-GAP0 <-- CONCEPT4
+Killing: DEMON4 = (EXP CONCEPT1 OBJECT-GAP0 PHYSICAL-OBJECT AFTER)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+--------------------------------------------------------
+Processing word: AND
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT5
+split-config, con = CONCEPT5, config = (*CONJUNCTION*)
+split-rest, con = CONCEPT5, rest = NIL
+CONCEPT5 = (*CONJUNCTION*)
+spawn-name, con = CONCEPT5, head = IGNORE, args = ('CONCEPT5)
+Spawning: DEMON8 = (IGNORE CONCEPT5)
+Executing: DEMON8 = (IGNORE CONCEPT5)
+Killing: DEMON8 = (IGNORE CONCEPT5)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+--------------------------------------------------------
+Processing word: DROPPED
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT6
+split-config, con = CONCEPT6, config = 
+(PTRANS ACTOR * <== (EXP 'HUMAN 'BEFORE) OBJECT THING-GAP <==
+ (EXP 'PHYSICAL-OBJECT 'AFTER) TO * <==
+ (PREPOSITION '(IN INTO ON) '(HUMAN PHYSICAL-OBJECT) 'AFTER) INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT THING-GAP))
+split-rest, con = CONCEPT6, rest = 
+(ACTOR * <== (EXP 'HUMAN 'BEFORE) OBJECT THING-GAP <== (EXP 'PHYSICAL-OBJECT 'AFTER) TO
+ * <== (PREPOSITION '(IN INTO ON) '(HUMAN PHYSICAL-OBJECT) 'AFTER) INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT THING-GAP))
+struct = NIL, slot = ACTOR
+slot = ACTOR, filler = *, struct = (ACTOR)
+spawn-name, con = CONCEPT6, head = EXP, args = ('CONCEPT6 'ACTOR0 'HUMAN 'BEFORE)
+Spawning: DEMON9 = (EXP CONCEPT6 ACTOR0 HUMAN BEFORE)
+
+======================== DEMON9 =========================
+t:Search for a CONCEPT with one of the given CLASSES
+     in the given DIRECTION until a boundary is reached.
+a:The CONCEPT is bound to the given GAP.
+========================================================
+
+struct = (ACTOR), gap = ACTOR0
+struct = (ACTOR ACTOR0), slot = OBJECT
+slot = OBJECT, filler = THING-GAP, struct = (ACTOR ACTOR0 OBJECT)
+spawn-name, con = CONCEPT6, head = EXP, args = ('CONCEPT6 'THING-GAP0 'PHYSICAL-OBJECT 'AFTER)
+Spawning: DEMON10 = (EXP CONCEPT6 THING-GAP0 PHYSICAL-OBJECT AFTER)
+
+======================== DEMON10 =========================
+t:Search for a CONCEPT with one of the given CLASSES
+     in the given DIRECTION until a boundary is reached.
+a:The CONCEPT is bound to the given GAP.
+========================================================
+
+struct = (ACTOR ACTOR0 OBJECT), gap = THING-GAP0
+struct = (ACTOR ACTOR0 OBJECT THING-GAP0), slot = TO
+slot = TO, filler = *, struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO)
+spawn-name, con = CONCEPT6, head = PREPOSITION, args = ('CONCEPT6 'TO0 '(IN INTO ON) '(HUMAN PHYSICAL-OBJECT) 'AFTER)
+Spawning: DEMON11 = (PREPOSITION CONCEPT6 TO0 (IN INTO ON) (HUMAN PHYSICAL-OBJECT) AFTER)
+
+======================== DEMON11 =========================
+t:Search for a CONCEPT with one of the given CLASSES and
+     preceeded by one of the given PREPOSITIONS.
+a:The CONCEPT is bound to the given GAP.
+========================================================
+
+struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO), gap = TO0
+struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO TO0), slot = INSTR
+slot = INSTR, filler = (PROPEL ACTOR (GRAVITY) OBJECT THING-GAP), struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO TO0 INSTR)
+#1 slot = INSTR, filler = (PROPEL ACTOR (GRAVITY) OBJECT THING-GAP), struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO TO0 INSTR)
+split-config, con = CONCEPT6, config = (PROPEL ACTOR (GRAVITY) OBJECT THING-GAP)
+split-rest, con = CONCEPT6, rest = (ACTOR (GRAVITY) OBJECT THING-GAP)
+struct = NIL, slot = ACTOR
+slot = ACTOR, filler = (GRAVITY), struct = (ACTOR)
+#1 slot = ACTOR, filler = (GRAVITY), struct = (ACTOR)
+split-config, con = CONCEPT6, config = (GRAVITY)
+split-rest, con = CONCEPT6, rest = NIL
+#2 slot = ACTOR, filler = (GRAVITY), struct = (ACTOR)
+struct = (ACTOR), gap = ACTOR1
+struct = (ACTOR ACTOR1), slot = OBJECT
+slot = OBJECT, filler = THING-GAP, struct = (ACTOR ACTOR1 OBJECT)
+struct = (ACTOR ACTOR1 OBJECT), gap = THING-GAP0
+#2 slot = INSTR, filler = (PROPEL ACTOR (GRAVITY) OBJECT THING-GAP), struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO TO0 INSTR)
+struct = (ACTOR ACTOR0 OBJECT THING-GAP0 TO TO0 INSTR), gap = INSTR1
+CONCEPT6 = (PTRANS ACTOR ACTOR0 OBJECT THING-GAP0 TO TO0 INSTR INSTR1)
+Executing: DEMON9 = (EXP CONCEPT6 ACTOR0 HUMAN BEFORE)
+ACTOR0 <-- CONCEPT0
+Killing: DEMON9 = (EXP CONCEPT6 ACTOR0 HUMAN BEFORE)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PTRANS ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT NIL TO NIL INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT NIL))
+--------------------------------------------------------
+Processing word: IT
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT7
+CONCEPT7 = NIL
+spawn-name, con = CONCEPT7, head = FIND-OBJECT-REF, args = ('CONCEPT7)
+Spawning: DEMON12 = (FIND-OBJECT-REF CONCEPT7)
+
+======================== DEMON12 =========================
+t:
+a:Set the MYCONCEPT to the most recently mentioned object.
+========================================================
+
+Executing: DEMON12 = (FIND-OBJECT-REF CONCEPT7)
+CONCEPT7 <-- CONCEPT4
+Killing: DEMON12 = (FIND-OBJECT-REF CONCEPT7)
+Executing: DEMON10 = (EXP CONCEPT6 THING-GAP0 PHYSICAL-OBJECT AFTER)
+THING-GAP0 <-- CONCEPT7
+Killing: DEMON10 = (EXP CONCEPT6 THING-GAP0 PHYSICAL-OBJECT AFTER)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PTRANS ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) TO NIL INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+--------------------------------------------------------
+Processing word: IN
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT8
+split-config, con = CONCEPT8, config = (PREPOSITION IS (IN))
+split-rest, con = CONCEPT8, rest = (IS (IN))
+struct = NIL, slot = IS
+slot = IS, filler = (IN), struct = (IS)
+#1 slot = IS, filler = (IN), struct = (IS)
+split-config, con = CONCEPT8, config = (IN)
+split-rest, con = CONCEPT8, rest = NIL
+#2 slot = IS, filler = (IN), struct = (IS)
+struct = (IS), gap = IS0
+CONCEPT8 = (PREPOSITION IS IS0)
+spawn-name, con = CONCEPT8, head = INSERT-AFTER, args = ('CONCEPT8 '(PHYSICAL-OBJECT SETTING) 'PREPOSITION-OBJ)
+Spawning: DEMON13 = (INSERT-AFTER CONCEPT8 (PHYSICAL-OBJECT SETTING) PREPOSITION-OBJ)
+
+======================== DEMON13 =========================
+t:Search for a CONCEPT with one of the given CLASSES.
+a:Insert the given SLOT with the MYCONCEPT as its GAP into
+     the CONCEPT
+========================================================
+
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PTRANS ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) TO NIL INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PREPOSITION IS (IN))
+--------------------------------------------------------
+Processing word: THE
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT9
+CONCEPT9 = NIL
+spawn-name, con = CONCEPT9, head = IGNORE, args = ('CONCEPT9)
+Spawning: DEMON14 = (IGNORE CONCEPT9)
+Executing: DEMON14 = (IGNORE CONCEPT9)
+Killing: DEMON14 = (IGNORE CONCEPT9)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PTRANS ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) TO NIL INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PREPOSITION IS (IN))
+--------------------------------------------------------
+Processing word: BOX
+--------------------------------------------------------
+Adding to *working-memory*: CONCEPT10
+split-config, con = CONCEPT10, config = (PHYSICAL-OBJECT CLASS (CONTAINER) NAME (BOX))
+split-rest, con = CONCEPT10, rest = (CLASS (CONTAINER) NAME (BOX))
+struct = NIL, slot = CLASS
+slot = CLASS, filler = (CONTAINER), struct = (CLASS)
+#1 slot = CLASS, filler = (CONTAINER), struct = (CLASS)
+split-config, con = CONCEPT10, config = (CONTAINER)
+split-rest, con = CONCEPT10, rest = NIL
+#2 slot = CLASS, filler = (CONTAINER), struct = (CLASS)
+struct = (CLASS), gap = CLASS1
+struct = (CLASS CLASS1), slot = NAME
+slot = NAME, filler = (BOX), struct = (CLASS CLASS1 NAME)
+#1 slot = NAME, filler = (BOX), struct = (CLASS CLASS1 NAME)
+split-config, con = CONCEPT10, config = (BOX)
+split-rest, con = CONCEPT10, rest = NIL
+#2 slot = NAME, filler = (BOX), struct = (CLASS CLASS1 NAME)
+struct = (CLASS CLASS1 NAME), gap = NAME2
+CONCEPT10 = (PHYSICAL-OBJECT CLASS CLASS1 NAME NAME2)
+Executing: DEMON13 = (INSERT-AFTER CONCEPT8 (PHYSICAL-OBJECT SETTING) PREPOSITION-OBJ)
+CONCEPT10 <-- (PHYSICAL-OBJECT CLASS CLASS1 NAME NAME2 PREPOSITION-OBJ CONCEPT8)
+Killing: DEMON13 = (INSERT-AFTER CONCEPT8 (PHYSICAL-OBJECT SETTING) PREPOSITION-OBJ)
+Executing: DEMON11 = (PREPOSITION CONCEPT6 TO0 (IN INTO ON) (HUMAN PHYSICAL-OBJECT) AFTER)
+TO0 <-- CONCEPT10
+Killing: DEMON11 = (PREPOSITION CONCEPT6 TO0 (IN INTO ON) (HUMAN PHYSICAL-OBJECT) AFTER)
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PTRANS ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) TO
+ (PHYSICAL-OBJECT CLASS (CONTAINER) NAME (BOX) PREPOSITION-OBJ (PREPOSITION IS (IN)))
+ INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+Parse Results:
+
+(GRASP ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) INSTR
+ (MOVE ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT (FINGERS) TO
+  (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+(PTRANS ACTOR (HUMAN NAME (JOHN) GENDER (MALE)) OBJECT
+ (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL)) TO
+ (PHYSICAL-OBJECT CLASS (CONTAINER) NAME (BOX) PREPOSITION-OBJ (PREPOSITION IS (IN)))
+ INSTR
+ (PROPEL ACTOR (GRAVITY) OBJECT (PHYSICAL-OBJECT CLASS (GAME-OBJECT) NAME (BALL))))
+********************************************************
+
+Program terminated
+
+********************************************************
+T
