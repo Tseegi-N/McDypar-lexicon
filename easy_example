@@ -1,0 +1,10 @@
+
+/// Everything that appears on a line that starts with three slashes
+/// is treated as a comment, and ignored.
+/ Also, text within paired slashes like this is ignored. /
+
+John gave Mary a book @
+
+/// The special character '@' terminates the parse. Everything following
+/// it is ignored. A '.' is parsed as the symbol *full-stop*. Two
+/// carriage returns in a row is parsed as the symbol *paragraph*

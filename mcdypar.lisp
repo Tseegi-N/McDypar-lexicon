@@ -821,6 +821,11 @@
 	     gender (male))
   demons (save-character))
 
+(word mary
+  def (human name (mary)
+	     gender (female))
+  demons (save-character))
+
 (word picked
   demons ((pick-up?) (decide?))
   m1 (grasp actor HUMAN-GAP <== (exp 'human 'before)
@@ -833,12 +838,28 @@
 			object * <== (exp '(human physical-ob) 'after)))
 )
 
+(word gave
+  def (atrans
+        actor * <== (exp 'human 'before)
+        to * <== (exp 'human 'after)
+        object * <== (exp 'physical-object 'after))
+)
+
 (word up
       demons (ignore))
 
 (word the
   demons (ignore)
 )
+
+(word the
+  demons (ignore)
+)
+
+(word book
+  def (physical-object class (book)
+		name (book))
+  demons (save-object))
 
 (word ball
   def (physical-object class (game-object)
