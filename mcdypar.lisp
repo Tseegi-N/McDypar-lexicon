@@ -140,7 +140,7 @@
 ;;; separates demons from config and returns the appropriate
 ;;; structure with gap-atoms created, etc.
 (defun split-config (con config)
-  (format T "~%split-config, con = ~S, config = ~S" con config)
+;;  (format T "~%split-config, con = ~S, config = ~S" con config)
   (if config
       (cons (car config) (split-rest con (cdr config)))))
 
@@ -150,7 +150,7 @@
 ;;; split-rest takes a list of form: (slot filler ... slot filler)
 ;;; where each filler may be followed by: <== (-dform-)
 (defun split-rest (con rest)
-  (format T "~%split-rest, con = ~S, rest = ~S" con rest)
+;;  (format T "~%split-rest, con = ~S, rest = ~S" con rest)
   (do ((struct nil)
        (slot nil)
        (filler nil)
@@ -161,10 +161,10 @@
       ;; body of loop
       (setf slot (pop rest))
       (setf filler (pop rest))
-      (format T "~%struct = ~S, slot = ~S" struct slot)
+;;      (format T "~%struct = ~S, slot = ~S" struct slot)
       (setf struct (append1 struct slot)) ;; slot names are copied
-      (format T "~%slot = ~S, filler = ~S, struct = ~S"
-	      slot filler struct)
+;;      (format T "~%slot = ~S, filler = ~S, struct = ~S"
+;;    slot filler struct)
       (cond (;; if the gap position is nil then create a gap-node with
 	     ;; the value nil.
 	     (null filler)
@@ -175,14 +175,14 @@
 	     ;; if the gap position holds an embedded structure, then
 	     ;; recursively spawn any demons for that structure.
 
-	     (format T "~%#1 slot = ~S, filler = ~S, struct = ~S"
-		     slot filler struct)
+;;	     (format T "~%#1 slot = ~S, filler = ~S, struct = ~S"
+;;		     slot filler struct)
 
 	     (setf gap (newsym slot))
 	     (set gap (split-config con filler))
 
-	     (format T "~%#2 slot = ~S, filler = ~S, struct = ~S"
-		     slot filler struct)
+;;	     (format T "~%#2 slot = ~S, filler = ~S, struct = ~S"
+;;		     slot filler struct)
 	     )
 
 	    ((equal filler '*)
@@ -211,7 +211,7 @@
 
 	    ;; Error case: should not occur
 	    (t (format t "~%Error in split-rest: filler = ~s" filler)))
-      (format T "~%struct = ~S, gap = ~S" struct gap)
+;;      (format T "~%struct = ~S, gap = ~S" struct gap)
       (setf struct (append1 struct gap))))
       
 ;;;**********************************************************************
@@ -273,7 +273,7 @@
 (defun eval-list (L)
   (cond ((null L) NIL)
 	((null (cdr L))
-	 (eval (car L)))
+	  (eval (car L)))
 	(T (eval (car L))
 	   (eval-list (cdr L)))))
 
@@ -357,8 +357,8 @@
 ;;; eval args and form their vals into a new dform with name at head.
 ;;; then put d-atom into a d-agenda on the con.
 (defun spawn-name (con head args)
- (format T "~%spawn-name, con = ~S, head = ~S, args = ~S"
-	  con head args)
+;; (format T "~%spawn-name, con = ~S, head = ~S, args = ~S"
+;;	  con head args)
   (cond ((null (get head 'demon))
 	 (format t "~%~s not spawned since undefined" head))
 	(t (let ((new-args (mapcar #'eval args))
@@ -580,13 +580,15 @@
 )
 
 (defun fin ()
-  (format T "~%Parse Results:~%")
+  (format T "~%~%Parse Results:~%")
   (pretty (do ((con *working-memory* (get con 'before))
 	       (unused NIL))
 	      ((null con) unused)
 	      (if (and (not (get con 'inside))
 		       (not (get con 'ignore)))
-		  (push con unused)))))
+		(push con unused))))
+  (format T "~%~%")
+  )
 
 (defun pretty (L)
   (dolist (con L)
@@ -814,7 +816,7 @@
 ;;;**********************************************************************
 ;;; These words are in the lexicon for the purpose of testing the
 ;;; parser (as transliterated from TLISP to Kyoto Common LISP) on the
-;;; sentence "John picked up the ball and dropped it in the box".
+;;; sentence "Mary picked up the ball and dropped it in the box".
 
 (word john
   def (human name (john)
@@ -852,7 +854,7 @@
   demons (ignore)
 )
 
-(word the
+(word a
   demons (ignore)
 )
 
