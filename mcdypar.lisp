@@ -818,6 +818,7 @@
 ;;; parser (as transliterated from TLISP to Kyoto Common LISP) on the
 ;;; sentence "Mary picked up the ball and dropped it in the box".
 
+;; subjects
 (word john
   def (human name (john)
 	     gender (male))
@@ -828,6 +829,7 @@
 	     gender (female))
   demons (save-character))
 
+;; verbs
 (word picked
   demons ((pick-up?) (decide?))
   m1 (grasp actor HUMAN-GAP <== (exp 'human 'before)
@@ -847,6 +849,14 @@
         object * <== (exp 'physical-object 'after))
 )
 
+(word dropped
+  def (ptrans actor * <==(exp 'human 'before)
+	      object THING-GAP <==(exp 'physical-object 'after)
+	      to * <==(preposition '(in into on) '(human physical-object) 'after)
+	      instr (propel actor (gravity)
+			    object THING-GAP)))
+
+;; filler words
 (word up
       demons (ignore))
 
@@ -858,6 +868,8 @@
   demons (ignore)
 )
 
+
+;; nouns
 (word book
   def (physical-object class (book)
 		name (book))
@@ -868,30 +880,25 @@
 		name (ball))
   demons (save-object))
 
+(word box
+  def (physical-object class (container)
+		name (box))
+)
+
+;; conjunction
 (word and
   def (*conjunction*)
   demons (ignore))
 
-(word dropped
-  def (ptrans actor * <==(exp 'human 'before)
-	      object THING-GAP <==(exp 'physical-object 'after)
-	      to * <==(preposition '(in into on) '(human physical-object) 'after)
-	      instr (propel actor (gravity)
-			    object THING-GAP)))
-
-
+;; reference words
 (word it
   demons (find-object-ref)
 )
 
+;; preposition
 (word in
   def (preposition is (in))
   ;; inserts the slot "preposition-obj" with the gap "(preposition is (in))"
   ;; the "preposition" demon in dropped is looking for the path "preposition-obj is *"
   demons (insert-after '(physical-object setting) 'preposition-obj)
   )
-
-(word box
-  def (physical-object class (container)
-		name (box))
-)
