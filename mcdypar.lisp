@@ -5,7 +5,7 @@
 ;;; JCM: Since memory is so plentiful, I'm modifying the code, making the
 ;;; symbol names more descriptive
 ;;;
-;;; Adapted to Common Lisp 2/21/92 by Michael McNally 
+;;; Adapted to Common Lisp 2/21/92 by Michael McNally
 ;;;   * A simple preprocessor has been added that recognizes periods
 ;;;   and paragraph breaks. (It can easily be extended to recognize
 ;;;   additional forms of punctuation.) The preprocessor also allows
@@ -213,7 +213,7 @@
 	    (t (format t "~%Error in split-rest: filler = ~s" filler)))
 ;;      (format T "~%struct = ~S, gap = ~S" struct gap)
       (setf struct (append1 struct gap))))
-      
+
 ;;;**********************************************************************
 ;;; DEMON MANAGEMENT
 ;;;**********************************************************************
@@ -440,6 +440,14 @@
 (defun con-class? (con class)
   (class? (head con) class))
 
+;;; returns true if con is an act
+(defun is-act? (con)
+  (member (head con) '(ingest mtrans atrans move transfer ptrans propel expel grasp mbuild)))
+
+;;; return true if main slots exist
+(defun completed-act? (con)
+  (and (con-class? con classes)))
+
 ;;; returns non-nil if atm is a member of class (searches recursively
 ;;; through atm's classes for this class.)
 (defun class? (atm class)
@@ -507,18 +515,25 @@
 ;;; 4. what direction to look in: before or after
 ;;; note: a. it tries 3. on con atm first, and then tries 1.
 ;;;       b. it quits if runs out of atms to look at
-(defun mcsearch (test-fcn &optional (start *working-memory*)
-			(stop-fcn nil) (dir 'before))
-  (do ((found nil)
-       (ptr start (get ptr dir)))
+;(defun mcsearch (test-fcn &optional (start *working-memory*)
+;			(stop-fcn nil) (dir 'before))
+;  (do ((found nil)
+;       (ptr start (get ptr dir)))
+;      ((or (null ptr)
+;	   (and stop-fcn
+;		(let ((st-val (apply stop-fcn (list ptr))))
+;		  (cond ((equal st-val t) nil)
+;			(st-val (setf found t)
+;				(setf ptr st-val)))))
+;	   (setf found (apply test-fcn (list ptr))))
+;       (and found ptr))))
+
+(defun mcsearch (test-fcn &optional (start *working-memory*) (stop-fcn nil) (dir 'before))
+  (do ((ptr start (get ptr dir)))
       ((or (null ptr)
-	   (and stop-fcn
-		(let ((st-val (apply stop-fcn (list ptr))))
-		  (cond ((equal st-val t) nil)
-			(st-val (setf found t)
-				(setf ptr st-val)))))
-	   (setf found (apply test-fcn (list ptr))))
-       (and found ptr))))
+           (and stop-fcn (apply stop-fcn (list ptr)))
+           (apply test-fcn (list ptr)))
+       ptr))) ; return the pointer where found or nil
 
 ;;; look for class throughout *working-memory*
 (defun find-working-memory (class myconcept)
@@ -526,8 +541,8 @@
 	     (and (not (equal con myconcept))
 		  (con-class? class)))
 	  *working-memory* nil 'before))
-	
-;;; like set, but used for tracing 
+
+;;; like set, but used for tracing
 (defun set1 (a b)
   (set a b)
   (format t "~%~s <-- ~s" a b)
@@ -639,14 +654,14 @@
 		      (push '*paragraph* s))
 		     ;; ignore spaces
 		     ((member next-char '(#\space #\return #\newline #\tab)))
-		     ;; default case: 
+		     ;; default case:
 		     (t
 		      (unread-char next-char *stream*)
 		      (let ((symbol (read *stream*)))
 			;; if it's a number just push it on
 			(cond ((numberp symbol)
 			       (push symbol s))
-			      ;; otherwise 
+			      ;; otherwise
 			      (t (let ((str (string symbol)))
 				   (push (intern
 					  (string-right-trim '(#\.) str))
@@ -677,6 +692,19 @@
 		   (if (not (equal con myconcept))
 		       (con-class? con classes)))
 		myconcept 'stop-at-conjunction dir))
+  (+act (link myconcept mygap test)))
+
+;;; searches for full CD structures 
+(demon expact 
+  (params myconcept mygap classes dir)
+  (comment (test "Search for an ACT with one of the given CLASSES"
+                 "in the given DIRECTION until a boundary is reached.")
+           (act "Bind the ACT to the GAP if found."))
+  (kill (eval mygap)) 
+  (test (mcsearch (lambda (con)
+                    (and (is-act? con) ;;; must be an ACT
+                         (con-class? con classes)))
+                  myconcept 'stop-at-conjunction dir))
   (+act (link myconcept mygap test)))
 
 ;;; Stops at a boundary and returns the local character if the
@@ -809,6 +837,14 @@
   (+act (set1 test (append (eval test) (list slot myconcept)))
 	(setf (get myconcept 'inside) (list test slot))))
 
+;;; choose between two demons
+(demon or
+  (params choices)
+  (comment "Try each choice in order, succeeding on the first that works.")
+  (test (some (lambda (choice)
+                (spawn choice))
+              choices)))
+
 
 
 ;;;**********************************************************************
@@ -827,6 +863,11 @@
 (word mary
   def (human name (mary)
 	     gender (female))
+  demons (save-character))
+
+(word fred
+  def (human name (fred)
+	     gender (male))
   demons (save-character))
 
 ;; verbs
@@ -856,6 +897,28 @@
 	      instr (propel actor (gravity)
 			    object THING-GAP)))
 
+(word told
+  def (mtrans
+        actor HUMAN-GAP <== (exp 'human 'before)
+		;;;object * <== (or (list '(expact 'act 'after)) (list '(exp 'mental-object 'after)))
+		object * <== (exp 'mental-object 'after)
+		from HUMAN-GAP <== (exp 'human 'before)
+        to * <== (exp 'human 'after))
+)
+
+(word eats
+  def (ingest
+        actor * <== (exp 'human 'before)
+		object * <== (exp 'physical-object 'after))
+)
+
+(word went
+  def (ptrans
+        actor HUMAN-GAP <== (exp 'human 'before)
+		object HUMAN-GAP
+        to * <== (preposition '(into) '(human physical-object) 'after))
+)
+
 ;; filler words
 (word up
       demons (ignore))
@@ -868,6 +931,13 @@
   demons (ignore)
 )
 
+(word an
+  demons (ignore)
+)
+
+(word that
+  demons (ignore)
+)
 
 ;; nouns
 (word book
@@ -885,6 +955,29 @@
 		name (box))
 )
 
+(word lobster
+  def (physical-object class (food)
+		name (lobster))
+	demons (save-object)
+)
+
+(word restaurant
+  def (physical-object class (building)
+		name (restaurant))
+	demons (save-object)
+)
+
+(word secret
+  def (mental-object class (secret)
+         name (secret))
+  demons (save-object))
+
+(word aspirin
+  def (physical-object class (medication) 
+		name (aspirin)
+		properties (substance (used-for "pain-relief" "anti-inflammatory")))
+  demons (save-object))
+
 ;; conjunction
 (word and
   def (*conjunction*)
@@ -899,6 +992,13 @@
 (word in
   def (preposition is (in))
   ;; inserts the slot "preposition-obj" with the gap "(preposition is (in))"
+  ;; the "preposition" demon in dropped is looking for the path "preposition-obj is *"
+  demons (insert-after '(physical-object setting) 'preposition-obj)
+  )
+
+  (word into
+  def (preposition is (into))
+  ;; inserts the slot "preposition-obj" with the gap "(preposition is (into))"
   ;; the "preposition" demon in dropped is looking for the path "preposition-obj is *"
   demons (insert-after '(physical-object setting) 'preposition-obj)
   )
