@@ -1,0 +1,5 @@
+;	This net is for STATECHANGE structures
+((75 76)
+	((T (BECOME1)) NIL)
+	((T (DIE1)) 2)
+)	;END-OF-TREE

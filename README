@@ -1,7 +1,34 @@
-To run a demo, start clisp from this directory and then evaluate
+3-14-2021
 
-(load 'mcdypar)
+This folder contains Neil Goldman's BABEL system working in Common Lisp.  For an example log, see babel_example_log.txt.
 
-and
+To do something like the original BABEL paraphrase demo, start CLISP (or another Common LISP interpreter) from within this folder and just evaluate the two forms at the top of tests.lisp, 
 
-(mcdypar 'example)
+(load 'prph) 
+(load 'surf)
+
+These load the paraphrase (prph) code and the English surface realization (surf) code.  Then evaluate any of the EXPRESS calls just after in tests.lisp that to generate paraphrases based on the CD structure.  For example:
+
+(EXPRESS
+  '(((CON
+          ((ACTOR (MARY) <=> (*GRASP*)
+             OBJECT (*NECK* PART (JOHN)))
+            TIME (T-4))
+          <≡
+          ((ACTOR (JOHN) <=> (*INGEST*)
+             TO (*INSIDE* PART (JOHN))
+             FROM (*MOUTH* PART (JOHN))
+             OBJECT (*AIR*))
+            MODE ((*CANNOT*))
+            TIME (T-2))))
+     )
+  )
+
+
+There are also a bunch of .EX example files in the directory with plenty of other examples.
+
+Notes: The original code from SAILDART was in a version of LISP at Stanford 
+called LISP 1.6, but the LISP code was generated from MLISP.  In Late 
+2019 and early 2020 we made the LISP code run on Common Lisp. This 
+involved adding a lot of functions that were available in LISP 1.6, in MLISP 
+or in the Stanford SAIL system that were not in Common Lisp.
