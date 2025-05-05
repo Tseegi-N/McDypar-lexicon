@@ -771,6 +771,31 @@
   (+act (con-set myconcept (get 'told 'm1)))
 )
 
+;;; Disambiguation for "to" when talking about purpose
+(demon to-purpose
+  (params myconcept)
+  (comment (test "If the next word is an ACT ...")
+	   (act "Set the MYCONCEPT to purpose version"))
+  (kill (eval myconcept))
+  (test (mcsearch (lambda (con)
+		   (and (is-act? con) ;;; must be an ACT
+            (not (equal con myconcept))))
+		myconcept nil 'after
+		))
+  (+act (con-set myconcept (get 'to 'm2))))
+
+;;; Disambiguation for "to" when talking about direction
+(demon to-direction
+  (params myconcept)
+  (comment (test "Search for a setting, person, physical object after the MYCONCEPT...")
+	   (act "Set the MYCONCEPT to direction version"))
+  (kill (eval myconcept))
+  (test (mcsearch (lambda (con)
+		   (and (not (equal con myconcept))
+			(con-class? con '(physical-object setting human))))
+		myconcept nil 'after
+		))
+  (+act (con-set myconcept (get 'to 'm1))))
 
 ;;; Disambiguation for different grammatical configurations for dated
 (demon dated-trans?
@@ -1070,21 +1095,25 @@
   ;; inserts the slot "preposition-obj" with the gap "(preposition is (in))"
   ;; the "preposition" demon in dropped is looking for the path "preposition-obj is *"
   demons (insert-after '(physical-object setting) 'preposition-obj)
-  )
+)
 
-  (word into
+(word into
   def (preposition is (into))
   ;; inserts the slot "preposition-obj" with the gap "(preposition is (into))"
   ;; the "preposition" demon in dropped is looking for the path "preposition-obj is *"
   demons (insert-after '(physical-object setting) 'preposition-obj)
-  )
+)
   
-  (word to
-  def (preposition is (to))
-  demons (insert-after '(physical-object setting) 'preposition-obj)
-  )
+(word to
+  demons ((to-direction) (to-purpose))
+  m1 (preposition is (to)
+        demons (insert-after '(physical-object setting human) 'preposition-obj))
+  m2 (mbuild 
+	    actor * <== (exp 'human 'before)
+	    object * <== (expact 'act 'after)
+	    object * <== (expact 'act 'before)))
 
-  (word from
+(word from
   def (preposition is (from))
   demons (insert-after '(physical-object setting) 'preposition-obj)
-  )
+)
