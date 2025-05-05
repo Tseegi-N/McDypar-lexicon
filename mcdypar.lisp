@@ -744,8 +744,32 @@
   (test (mcsearch (lambda (con)
 		   (and (not (equal con myconcept))
 			(con-class? con '(human physical-object))))
-		myconcept nil 'after))
-  (+act (con-set myconcept (get 'pick 'm2))))
+		myconcept nil 'after
+		))
+  (+act (con-set myconcept (get 'picked 'm2))))
+
+;;; Disambiguation for "told a secret ..." i.e. non-recursiveness
+(demon non-recursive
+  (params myconcept)
+  (comment (test "Search for a person, mental, physical object after the MYCONCEPT...")
+	   (act "Set the MYCONCEPT to non-recursive version"))
+  (kill (eval myconcept))
+  (test (mcsearch (lambda (con)
+		   (and (not (equal con myconcept))
+			(con-class? con '(human physical-object mental-object))))
+		myconcept nil 'after
+		))
+  (+act (con-set myconcept (get 'told 'm2))))
+
+;;; Disambiguation for "told that ..." i.e. recursiveness
+(demon recursive
+  (params myconcept)
+  (comment (test "If the next or next-next word is that ...")
+	   (act "Set the MYCONCEPT to non-recursive version"))
+  (kill (eval myconcept))
+  (test (or (equal *next-word* 'that) (equal *next-next-word* 'that))) ; this allows limited 'look-ahead' ability
+  (+act (con-set myconcept (get 'told 'm1)))
+)
 
 
 ;;; Disambiguation for different grammatical configurations for dated
@@ -841,15 +865,6 @@
   (+act (set1 test (append (eval test) (list slot myconcept)))
 	(setf (get myconcept 'inside) (list test slot))))
 
-;;; choose between two demons
-(demon or
-  (params choices)
-  (comment "Try each choice in order, succeeding on the first that works.")
-  (test (some (lambda (choice)
-                (spawn choice))
-              choices)))
-
-
 
 ;;;**********************************************************************
 ;;; TEST LEXICON
@@ -872,6 +887,11 @@
 (word fred
   def (human name (fred)
 	     gender (male))
+  demons (save-character))
+
+(word sarah
+  def (human name (sarah)
+	     gender (female))
   demons (save-character))
 
 ;; verbs
@@ -909,11 +929,15 @@
 			    object THING-GAP)))
 
 (word told
-  def (mtrans
+  demons ((recursive) (non-recursive))
+  m1 (mtrans
         actor HUMAN-GAP <== (exp 'human 'before)
-		;;;object * <== (or (list '(expact 'act 'after)) (list '(exp 'mental-object 'after)))
-		;;;object * <== (exp 'mental-object 'after)
 		object * <== (expact 'act 'after)
+		from HUMAN-GAP <== (exp 'human 'before)
+        to * <== (exp 'human 'after))
+  m2 (mtrans
+        actor HUMAN-GAP <== (exp 'human 'before)
+		object * <== (exp 'mental-object 'after)
 		from HUMAN-GAP <== (exp 'human 'before)
         to * <== (exp 'human 'after))
 )
@@ -928,7 +952,7 @@
   def (ptrans
         actor HUMAN-GAP <== (exp 'human 'before)
 		object HUMAN-GAP
-        to * <== (preposition '(into) '(human physical-object) 'after))
+        to * <== (preposition '(into to inside) '(human physical-object) 'after))
 )
 
 (word bought
@@ -936,6 +960,14 @@
         actor HUMAN-GAP <== (exp 'human 'before)
         to  HUMAN-GAP
 		from * <== (exp 'human 'after)
+        object * <== (exp 'physical-object 'after))
+)
+
+(word pushed
+  def (propel
+        actor HUMAN-GAP <== (exp 'human 'before)
+		from * <== (preposition '(from) '(human physical-object) 'after)
+		to * <== (preposition '(to into) '(human physical-object) 'after)
         object * <== (exp 'physical-object 'after))
 )
 
@@ -997,6 +1029,31 @@
 		name (aspirin))
   demons (save-object))
 
+(word desk
+  def (physical-object class (furniture) 
+		name (desk))
+  demons (save-object))
+
+(word table 
+  def (physical-object class (furniture) 
+		name (table))
+  demons (save-object))
+
+(word chair
+  def (physical-object class (furniture) 
+		name (chair))
+  demons (save-object))
+
+(word wall 
+  def (physical-object class (structure) 
+		name (wall))
+  demons (save-object))
+
+(word window
+  def (physical-object class (structure) 
+		name (window))
+  demons (save-object))
+
 ;; conjunction
 (word and
   def (*conjunction*)
@@ -1019,5 +1076,15 @@
   def (preposition is (into))
   ;; inserts the slot "preposition-obj" with the gap "(preposition is (into))"
   ;; the "preposition" demon in dropped is looking for the path "preposition-obj is *"
+  demons (insert-after '(physical-object setting) 'preposition-obj)
+  )
+  
+  (word to
+  def (preposition is (to))
+  demons (insert-after '(physical-object setting) 'preposition-obj)
+  )
+
+  (word from
+  def (preposition is (from))
   demons (insert-after '(physical-object setting) 'preposition-obj)
   )
