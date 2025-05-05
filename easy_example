@@ -3,7 +3,7 @@
 /// is treated as a comment, and ignored.
 / Also, text within paired slashes like this is ignored. /
 
-Fred told Mary a secret. John went into a restaurant. @
+John bought the book to give it to Mary. @
 
 /// The special character '@' terminates the parse. Everything following
 /// it is ignored. A '.' is parsed as the symbol *full-stop*. Two

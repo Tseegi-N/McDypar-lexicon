@@ -515,25 +515,18 @@
 ;;; 4. what direction to look in: before or after
 ;;; note: a. it tries 3. on con atm first, and then tries 1.
 ;;;       b. it quits if runs out of atms to look at
-;(defun mcsearch (test-fcn &optional (start *working-memory*)
-;			(stop-fcn nil) (dir 'before))
-;  (do ((found nil)
-;       (ptr start (get ptr dir)))
-;      ((or (null ptr)
-;	   (and stop-fcn
-;		(let ((st-val (apply stop-fcn (list ptr))))
-;		  (cond ((equal st-val t) nil)
-;			(st-val (setf found t)
-;				(setf ptr st-val)))))
-;	   (setf found (apply test-fcn (list ptr))))
-;       (and found ptr))))
-
-(defun mcsearch (test-fcn &optional (start *working-memory*) (stop-fcn nil) (dir 'before))
-  (do ((ptr start (get ptr dir)))
+(defun mcsearch (test-fcn &optional (start *working-memory*)
+			(stop-fcn nil) (dir 'before))
+  (do ((found nil)
+       (ptr start (get ptr dir)))
       ((or (null ptr)
-           (and stop-fcn (apply stop-fcn (list ptr)))
-           (apply test-fcn (list ptr)))
-       ptr))) ; return the pointer where found or nil
+	   (and stop-fcn
+		(let ((st-val (apply stop-fcn (list ptr))))
+		  (cond ((equal st-val t) nil)
+			(st-val (setf found t)
+				(setf ptr st-val)))))
+	   (setf found (apply test-fcn (list ptr))))
+       (and found ptr))))
 
 ;;; look for class throughout *working-memory*
 (defun find-working-memory (class myconcept)
@@ -702,8 +695,9 @@
            (act "Bind the ACT to the GAP if found."))
   (kill (eval mygap)) 
   (test (mcsearch (lambda (con)
-                    (and (is-act? con) ;;; must be an ACT
-                         (con-class? con classes)))
+                    (and
+                      (is-act? con) ;;; must be an ACT
+                      (not (equal con myconcept))))
                   myconcept 'stop-at-conjunction dir))
   (+act (link myconcept mygap test)))
 
@@ -822,6 +816,16 @@
 		myconcept nil 'before))
   (+act (set1 myconcept test)))
 
+(demon find-male-ref
+  (params myconcept)
+  (comment (act "Set the MYCONCEPT to the most recently mentioned male."))
+  (test (mcsearch (lambda (con)
+		   (and (not (equal con myconcept))
+			(con-class? con '(human))
+			(equal (path '(gender) con) '(male))
+			))
+		myconcept nil 'before))
+  (+act (set1 myconcept test)))
 
 ;;; This demon performs modifications on other concepts in *working-memory* by
 ;;; adding a new slot gap pair to it.
@@ -890,6 +894,13 @@
         object * <== (exp 'physical-object 'after))
 )
 
+(word give
+  def (atrans
+        actor * <== (exp 'human 'before)
+        to * <== (exp 'human 'after)
+        object * <== (exp 'physical-object 'after))
+)
+
 (word dropped
   def (ptrans actor * <==(exp 'human 'before)
 	      object THING-GAP <==(exp 'physical-object 'after)
@@ -901,7 +912,8 @@
   def (mtrans
         actor HUMAN-GAP <== (exp 'human 'before)
 		;;;object * <== (or (list '(expact 'act 'after)) (list '(exp 'mental-object 'after)))
-		object * <== (exp 'mental-object 'after)
+		;;;object * <== (exp 'mental-object 'after)
+		object * <== (expact 'act 'after)
 		from HUMAN-GAP <== (exp 'human 'before)
         to * <== (exp 'human 'after))
 )
@@ -917,6 +929,14 @@
         actor HUMAN-GAP <== (exp 'human 'before)
 		object HUMAN-GAP
         to * <== (preposition '(into) '(human physical-object) 'after))
+)
+
+(word bought
+  def (atrans
+        actor HUMAN-GAP <== (exp 'human 'before)
+        to  HUMAN-GAP
+		from * <== (exp 'human 'after)
+        object * <== (exp 'physical-object 'after))
 )
 
 ;; filler words
@@ -974,8 +994,7 @@
 
 (word aspirin
   def (physical-object class (medication) 
-		name (aspirin)
-		properties (substance (used-for "pain-relief" "anti-inflammatory")))
+		name (aspirin))
   demons (save-object))
 
 ;; conjunction
