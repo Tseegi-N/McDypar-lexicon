@@ -1105,13 +1105,17 @@
 )
   
 (word to
-  demons ((to-direction) (to-purpose))
-  m1 (preposition is (to)
-        demons (insert-after '(physical-object setting human) 'preposition-obj))
-  m2 (mbuild 
-	    actor * <== (exp 'human 'before)
-	    object * <== (expact 'act 'after)
-	    object * <== (expact 'act 'before)))
+  ;;; failed case of disambiguation of to when used in a context of purpose
+  ;demons ((to-direction) (to-purpose))
+  ;m1 (prep is (to)
+  ;      demons (insert-after '(physical-object human) 'preposition-obj))
+  ;m2 (mbuild 
+	;    actor * <== (exp 'human 'before)
+	;    object * <== (expact 'act 'after)
+	;    object * <== (expact 'act 'before))
+	def (preposition is (to))
+    demons (insert-after '(physical-object setting) 'preposition-obj)
+)
 
 (word from
   def (preposition is (from))
