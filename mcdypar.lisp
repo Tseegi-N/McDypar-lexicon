@@ -898,7 +898,10 @@
 ;;; parser (as transliterated from TLISP to Kyoto Common LISP) on the
 ;;; sentence "Mary picked up the ball and dropped it in the box".
 
+;;**************************
 ;; subjects
+;;**************************
+
 (word john
   def (human name (john)
 	     gender (male))
@@ -919,7 +922,16 @@
 	     gender (female))
   demons (save-character))
 
+(word george
+  def (human name (george)
+	     gender (male))
+  demons (save-character))
+
+
+;;*************************
 ;; verbs
+;;*************************
+
 (word picked
   demons ((pick-up?) (decide?))
   m1 (grasp actor HUMAN-GAP <== (exp 'human 'before)
@@ -996,7 +1008,44 @@
         object * <== (exp 'physical-object 'after))
 )
 
+(word bought
+  def (atrans
+        actor * <== (exp 'human 'before)
+        object * <== (exp 'physical-object 'after))
+)
+
+(word went
+  def (ptrans
+        actor HUMAN-GAP <== (exp 'human 'before)
+		object HUMAN-GAP
+        to * <== (preposition '(into) '(human physical-object) 'after))
+)
+
+(word shot
+  def (propel
+        actor * <== (exp 'human 'before)        
+        object * <== (exp 'human 'after)        
+        instr * <== (exp 'weapon 'before))     
+  demons (build-propel-frame)
+)
+
+(word said
+  def (mtrans
+        actor * <== (exp 'human 'before)     
+        object * <== (exp 'proposition 'after)) 
+  demons (build-communication-frame)
+)
+
+(word left
+  def (move
+        actor * <== (exp 'human 'before)
+        object * <== (exp 'physical-object 'after))
+)
+
+;;*************************
 ;; filler words
+;;*************************
+
 (word up
       demons (ignore))
 
@@ -1016,7 +1065,11 @@
   demons (ignore)
 )
 
+
+;;**************************
 ;; nouns
+;;**************************
+
 (word book
   def (physical-object class (book)
 		name (book))
@@ -1079,12 +1132,29 @@
 		name (window))
   demons (save-object))
 
+(word home 
+  def (physical-object class (building)
+        name (home))
+  demons (save-object))
+
+(word gun
+  def (physical-object class (weapon)
+        name (gun))
+  demons (save-object)) 
+
+
+;;*********************
 ;; conjunction
+;;*********************
+
 (word and
   def (*conjunction*)
   demons (ignore))
 
+;;*********************
 ;; reference words
+;;*********************
+
 (word it
   demons (find-object-ref)
 )
