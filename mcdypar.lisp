@@ -1008,18 +1008,20 @@
         object * <== (exp 'physical-object 'after))
 )
 
-(word bought
-  def (atrans
-        actor * <== (exp 'human 'before)
-        object * <== (exp 'physical-object 'after))
-)
+;;; lesly codes 
+;;; commenting out duplicate words
+;(word bought
+;  def (atrans
+;        actor * <== (exp 'human 'before)
+;        object * <== (exp 'physical-object 'after))
+;)
 
-(word went
-  def (ptrans
-        actor HUMAN-GAP <== (exp 'human 'before)
-		object HUMAN-GAP
-        to * <== (preposition '(into) '(human physical-object) 'after))
-)
+;(word went
+;  def (ptrans
+;        actor HUMAN-GAP <== (exp 'human 'before)
+;		object HUMAN-GAP
+;        to * <== (preposition '(into) '(human physical-object) 'after))
+;)
 
 (word shot
   def (propel
