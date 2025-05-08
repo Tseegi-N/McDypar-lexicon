@@ -18,7 +18,7 @@ If you'd like to generate paraphrases of your most recent parsing sentence, run 
 ```
 
 ## What is McDypar?
-McDypar (Micro Dyer's Parser) is a conceptual parser originally developed by Michael Dyer as an improvement over McELI. It processes sentences left to right, spawning demons—independent expectation-based processes—that bind concepts together as meaning unfolds. McDypar stores intermediate representations in a working memory (WM) and builds Conceptual Dependency (CD) structures that represent the semantic essence of a sentence using primitives like MTRANS, PTRANS, and INGEST. These structures enable knowledge inference and reasoning.
+McDypar (Micro Dyer's Parser) is a conceptual parser originally developed by Michael Dyer as an improvement over McELI. It processes sentences left to right, spawning demons, independent expectation-based processes, that bind concepts together as meaning unfolds. McDypar stores intermediate representations in a working memory (WM) and builds CD structures that represent the semantic essence of a sentence using primitives like *MTRANS*, *PTRANS*, and *INGEST*. These structures enable knowledge inference and reasoning.
 
 ## Added Lexicons
 - Mary gave John a book.
@@ -40,7 +40,7 @@ Our contributions include:
 
 - Implementing recursive parsing to handle sentences with embedded clauses (e.g., “John told Mary that Fred eats lobster”).
 
-- Exploring disambiguation demons to differentiate between sentence contexts, such as distinguishing sentence structure of "told that ___" or "told a secret."
+- Exploring disambiguation demons to differentiate between sentence contexts, such as distinguishing sentence structure of "told that ___" versus "told a secret."
   
 - Integrating McDypar with BABEL, the paraphrasing system from MARGIE, to translate CD structures back into natural English sentences.
 
